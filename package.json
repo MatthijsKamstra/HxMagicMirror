@@ -1,0 +1,16 @@
+{
+	"license": "MIT",
+	"description": "HxMagicMirror",
+	"author": "Matthijs Kamstra aka [mck]",
+	"version": "0.0.1",
+	"private": true,
+	"devDependencies": {
+		"grunt-exec": "~0.4.6",
+		"onchange": "^2.0.0",
+		"livereload": "^0.3.7"
+	},
+	"scripts": {
+		"watch": "onchange '**/*.hx' '**/*.md' '**/*.css' '**/*.html' -v -- haxe javascript.hxml & livereload bin/",
+		"prewatch": "haxe javascript.hxml"
+	}
+}
