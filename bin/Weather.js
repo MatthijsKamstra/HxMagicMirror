@@ -119,14 +119,48 @@ Main.prototype = {
 		this.divCenter = window.document.getElementById("cc");
 		this.divBottomLeft = window.document.getElementById("bl");
 		this.divBottomRight = window.document.getElementById("br");
+		this.divBottomLeft.innerHTML = "";
+		this.divBottomRight.innerHTML = "";
 		var time = new Time(this.divTopLeft);
 		var compliments = new Compliments(this.divCenter);
 		var weather = new Weather(this.divTopRight);
-		this.divBottomLeft.innerHTML = "";
-		this.divBottomRight.innerHTML = "";
+		var quote = new Quote(this.divBottomRight);
 	}
 };
 Math.__name__ = true;
+var Quote = function(el) {
+	this.NEW_END_POINT = "http://quotesondesign.com/api/3.0/api-3.0.json";
+	this.element = el;
+	Update.call(this,720000);
+};
+Quote.__name__ = true;
+Quote.__interfaces__ = [IUpdate];
+Quote.__super__ = Update;
+Quote.prototype = $extend(Update.prototype,{
+	updateHandler: function() {
+		this.loadData();
+	}
+	,loadData: function() {
+		var _g = this;
+		var req = new haxe_Http(this.NEW_END_POINT);
+		req.onData = function(data) {
+			_g._json = JSON.parse(data);
+			_g._wjson = JSON.parse(data);
+			console.log("_json: " + Std.string(_g._json));
+			_g.createList();
+		};
+		req.onError = function(error) {
+			console.log("error: " + error);
+		};
+		req.request(true);
+	}
+	,createList: function() {
+		var _html = "<b>Quote</b>";
+		_html += "<p class='quote'>" + this._wjson.quote + "</p>";
+		_html += "<p class='author'>" + this._wjson.author + "</p>";
+		this.element.innerHTML = _html;
+	}
+});
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {

@@ -36,14 +36,16 @@ class Main
 		divBottomLeft = js.Browser.document.getElementById("bl");
 		divBottomRight = js.Browser.document.getElementById("br");
 
+		// reset
+		divBottomLeft.innerHTML = "";
+		divBottomRight.innerHTML = "";
+
 		// start 
 		var time = new Time(divTopLeft);
 		var compliments = new Compliments(divCenter);
 		var weather = new Weather(divTopRight);
+		var quote = new Quote(divBottomRight);
 
-		// reset
-		divBottomLeft.innerHTML = "";
-		divBottomRight.innerHTML = "";
 	}
 
 	static public function main()
