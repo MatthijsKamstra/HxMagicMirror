@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Haxe Magic Mirror</title>
+	
+	<!-- Code generated using Haxe -->
+	<script type="text/javascript" src="Weather.js"></script>
+
+	<link href='https://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+	<style type="text/css">
+
+		html, body {
+			padding:0;
+			margin:0;
+			font-family: 'Lato', sans-serif;
+			background-color: black;
+			color: white;
+		}
+
+		.container {
+			border: 1px solid red;
+			width: 200px;
+			/*display: block;*/
+		}
+		.top-left{
+			float:left;
+		}
+		.top-right{
+			float:right;
+		}
+		.bottom-left{
+			float:left;
+			position: absolute; 
+			bottom: 0;
+
+		}
+		.bottom-right{
+			float:right;
+			position: absolute; 
+			bottom: 0;
+			right:0;
+		}
+
+	</style>
+</head>
+<body>
+
+<div id="tl" class="top-left container">top-left</div>
+<div id="tr" class="top-right container">top-right</div>
+<div id="bl" class="bottom-left container">bottom-left</div>
+<div id="br" class="bottom-right container">bottom-right</div>
+
+
+</body>
+</html>
