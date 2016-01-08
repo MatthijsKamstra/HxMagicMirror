@@ -5,6 +5,45 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var IUpdate = function() { };
+IUpdate.__name__ = true;
+var Update = function(delay) {
+	this.DELAY = 1000;
+	this.DELAY = delay;
+	this.updateHandler();
+	this.update();
+};
+Update.__name__ = true;
+Update.__interfaces__ = [IUpdate];
+Update.prototype = {
+	update: function() {
+		this.time = new haxe_Timer(this.DELAY);
+		this.time.run = $bind(this,this.updateHandler);
+	}
+	,updateHandler: function() {
+		console.log("override function updateHandler():Void {}");
+	}
+};
+var Compliments = function(el) {
+	this.eveningArr = ["Wow, you look hot!","You look nice!","Hi, sexy!"];
+	this.afternoonArr = ["Hello, beauty!","You look sexy!","Looking good today!"];
+	this.morningArr = ["Good morning, handsome!","Enjoy your day!","How was your sleep?"];
+	this.element = el;
+	Update.call(this,30000);
+};
+Compliments.__name__ = true;
+Compliments.__interfaces__ = [IUpdate];
+Compliments.__super__ = Update;
+Compliments.prototype = $extend(Update.prototype,{
+	updateHandler: function() {
+		var _list = [];
+		var date = new Date();
+		var hour = date.getHours();
+		if(hour >= 3 && hour < 12) _list = this.morningArr; else if(hour >= 12 && hour < 17) _list = this.afternoonArr; else if(hour >= 17 || hour < 3) _list = this.eveningArr; else _list = this.afternoonArr;
+		var html = _list[Math.floor(Math.random() * _list.length)];
+		this.element.innerHTML = html;
+	}
+});
 var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
@@ -63,26 +102,76 @@ _$List_ListIterator.prototype = {
 	}
 };
 var Main = function() {
-	this._doc = window.document;
-	this.CITY = "Amsterdam,Netherlands";
-	this.API_KEY = "ab210136cff24e09e6cc9a5950491839";
+	this.doc = window.document;
 	var _g = this;
-	this._doc.addEventListener("DOMContentLoaded",function(event) {
+	this.doc.addEventListener("DOMContentLoaded",function(event) {
 		_g.init();
-		_g.loadData();
 	});
 };
 Main.__name__ = true;
 Main.main = function() {
-	console.log("Hello World");
 	var main = new Main();
 };
 Main.prototype = {
 	init: function() {
-		this.divTopRight = window.document.getElementById("tr");
 		this.divTopLeft = window.document.getElementById("tl");
-		this.divBottomRight = window.document.getElementById("br");
+		this.divTopRight = window.document.getElementById("tr");
+		this.divCenter = window.document.getElementById("cc");
 		this.divBottomLeft = window.document.getElementById("bl");
+		this.divBottomRight = window.document.getElementById("br");
+		var time = new Time(this.divTopLeft);
+		var compliments = new Compliments(this.divCenter);
+		var weather = new Weather(this.divTopRight);
+		this.divBottomLeft.innerHTML = "";
+		this.divBottomRight.innerHTML = "";
+	}
+};
+Math.__name__ = true;
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var StringTools = function() { };
+StringTools.__name__ = true;
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) return s;
+	while(s.length < l) s = c + s;
+	return s;
+};
+var Time = function(el) {
+	this.monthArr = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+	this.dayArr = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+	this.element = el;
+	Update.call(this,1000);
+};
+Time.__name__ = true;
+Time.__interfaces__ = [IUpdate];
+Time.__super__ = Update;
+Time.prototype = $extend(Update.prototype,{
+	updateHandler: function() {
+		var date = new Date();
+		var html = "";
+		html += "<div class=\"date small dimmed\">" + this.dayArr[date.getDay()] + ", " + date.getDate() + " " + this.monthArr[date.getMonth()] + " " + date.getFullYear() + "</div>";
+		html += "<div class=\"time\">" + this.lpad(date.getHours()) + ":" + this.lpad(date.getMinutes()) + ":" + this.lpad(date.getSeconds()) + "</div>";
+		this.element.innerHTML = html;
+	}
+	,lpad: function(d) {
+		return StringTools.lpad(d == null?"null":"" + d,"0",2);
+	}
+});
+var Weather = function(el) {
+	this.CITY = "Amsterdam,Netherlands";
+	this.API_KEY = "ab210136cff24e09e6cc9a5950491839";
+	this.element = el;
+	Update.call(this,6000);
+};
+Weather.__name__ = true;
+Weather.__interfaces__ = [IUpdate];
+Weather.__super__ = Update;
+Weather.prototype = $extend(Update.prototype,{
+	updateHandler: function() {
+		this.loadData();
 	}
 	,loadData: function() {
 		var _g = this;
@@ -90,16 +179,14 @@ Main.prototype = {
 		req.onData = function(data) {
 			_g._json = JSON.parse(data);
 			_g._wjson = JSON.parse(data);
-			console.log("_json: " + Std.string(_g._json));
 			_g.createList();
 		};
 		req.onError = function(error) {
-			js_Browser.alert("error: " + error);
+			console.log("error: " + error);
 		};
 		req.request(true);
 	}
 	,createList: function() {
-		console.log("_wjson " + Std.string(this._wjson));
 		var _Date = new Date();
 		var _currentDate;
 		var d = new Date();
@@ -113,7 +200,7 @@ Main.prototype = {
 		var d2 = new Date();
 		d2.setTime(this._wjson.sys.sunset * 1000);
 		_sunset = d2;
-		var _html = "<h1>Weather</h1>";
+		var _html = "<b>Weather</b>";
 		_html += "<p>current time: " + _currentDate.getHours() + ":" + _currentDate.getMinutes() + "</p>";
 		_html += "<p>sunrise: " + _sunrise.getHours() + ":" + _sunrise.getMinutes() + "</p>";
 		_html += "<p>sunset: " + _sunset.getHours() + ":" + _sunset.getMinutes() + "</p>";
@@ -133,15 +220,9 @@ Main.prototype = {
 		_html += "<p>" + "</p>";
 		_html += "<p>" + "</p>";
 		_html += "<p>" + "</p>";
-		this.divTopRight.innerHTML = _html;
+		this.element.innerHTML = _html;
 	}
-};
-Math.__name__ = true;
-var Std = function() { };
-Std.__name__ = true;
-Std.string = function(s) {
-	return js_Boot.__string_rec(s,"");
-};
+});
 var haxe_Http = function(url) {
 	this.url = url;
 	this.headers = new List();
@@ -248,6 +329,17 @@ haxe_Http.prototype = {
 	,onStatus: function(status) {
 	}
 };
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe_Timer.__name__ = true;
+haxe_Timer.prototype = {
+	run: function() {
+	}
+};
 var js__$Boot_HaxeError = function(val) {
 	Error.call(this);
 	this.val = val;
@@ -335,9 +427,8 @@ js_Browser.createXMLHttpRequest = function() {
 	if(typeof ActiveXObject != "undefined") return new ActiveXObject("Microsoft.XMLHTTP");
 	throw new js__$Boot_HaxeError("Unable to create XMLHttpRequest object.");
 };
-js_Browser.alert = function(v) {
-	window.alert(js_Boot.__string_rec(v,""));
-};
+var $_, $fid = 0;
+function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = ["Date"];

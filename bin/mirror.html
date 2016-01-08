@@ -15,12 +15,13 @@
 			padding:0;
 			margin:0;
 			font-family: 'Lato', sans-serif;
+			font-weight: 100;
 			background-color: black;
 			color: white;
 		}
 
 		.container {
-			border: 1px solid red;
+			/*border: 1px solid red;*/
 			width: 200px;
 			/*display: block;*/
 		}
@@ -30,11 +31,19 @@
 		.top-right{
 			float:right;
 		}
+		.center{
+			width: 600px;
+		    margin: 0 auto;
+			text-align: center;
+			left: 0;
+			right: 0;
+			bottom: 200px;
+			position: absolute;;
+		}
 		.bottom-left{
 			float:left;
 			position: absolute; 
 			bottom: 0;
-
 		}
 		.bottom-right{
 			float:right;
@@ -49,6 +58,7 @@
 
 <div id="tl" class="top-left container">top-left</div>
 <div id="tr" class="top-right container">top-right</div>
+<div id="cc" class="center container">center</div>
 <div id="bl" class="bottom-left container">bottom-left</div>
 <div id="br" class="bottom-right container">bottom-right</div>
 
